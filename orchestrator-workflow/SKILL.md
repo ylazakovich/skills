@@ -7,6 +7,16 @@ description: FOR MAIN ORCHESTRATOR ONLY. Orchestrates complex development tasks 
 
 You are the orchestrator. You coordinate sub-agents. You do NOT do deep work yourself.
 
+## Role Resolution Priority
+
+When choosing sub-agent instructions, prefer sources in this order:
+
+1. Project-local guidance in the target repo such as `AGENTS.md`, `.agents/`, or similar local role docs.
+2. Bundled portable references in `references/subagents.md`.
+3. Legacy Claude-only profiles in `~/.claude/agents/` if they exist and are still relevant.
+
+If the target project already defines stack-specific roles, use those roles as the source of truth for delegation.
+
 ## Mandatory Flow
 
 You MUST follow this exact flow. No skipping. No deviations.
@@ -43,7 +53,7 @@ You MAY use Read, Glob, Grep sparingly to get initial context. This is NOT deep 
 
 You MUST NOT perform deep research yourself. You are the orchestrator, not the researcher.
 
-ONLY delegate via `task` tool to **research agents** from ~/.claude/agents/. Use agents appropriate for:
+ONLY delegate via the environment's native sub-agent mechanism. Prefer project-local role docs when they exist, and otherwise use the bundled portable role catalog. Use agents appropriate for:
 - Code analysis and pattern investigation
 - Web documentation and best practices
 - Git history and change analysis
@@ -120,9 +130,9 @@ You MUST maximize parallel execution. Only run sequentially when there are true 
 
 **Actor: SUB-AGENTS** | **Mode: PARALLEL**
 
-### Step 1: Compilation Check
+### Step 1: Project Verification
 
-YOU call get_project_problems to check for compilation errors.
+YOU run the most relevant local verification commands for the target project, for example typecheck, tests, build, lint, or framework-specific health checks.
 
 ### Step 2: Delegate to Validators
 
@@ -142,20 +152,21 @@ Validators can run in PARALLEL if they check different parts.
 
 ## Agent Categories
 
-You have access to several categories of sub-agents in ~/.claude/agents/:
+You have access to several categories of sub-agents. Prefer project-local roles when available:
 
-- **Research agents**: For deep investigation of code, documentation, git history, UI
-- **Development agents**: For implementation work, ranging from simple to complex
-- **Validation agents**: For verifying correctness of changes
-- **Testing agents**: For creating/updating test coverage
+- **Planning / architecture agents**: for decomposition, design checks, and dependency analysis
+- **Research agents**: for deep investigation of code, documentation, git history, UI
+- **Development agents**: for backend, frontend, or cross-cutting implementation work
+- **Validation agents**: for verifying correctness, domain compliance, and plan adherence
+- **Testing agents**: for creating or updating test coverage
 
-Select agents based on task complexity. Check available agents in ~/.claude/agents/ for current options.
+Select agents based on task complexity and ownership boundaries. Check project-local docs first, then bundled references for fallback options.
 
 ---
 
 ## Portability Note
 
-This skill originated from a Claude Code setup that used external files in `~/.claude/agents/` and a global orchestrator config. For cross-agent use in Claude Code and Codex, use the bundled references in `references/subagents.md` and `references/output-style.md` as the source of truth when the external Claude files are unavailable.
+This skill originated from a Claude Code setup that used external files in `~/.claude/agents/` and a global orchestrator config. For cross-project use in Claude Code and Codex, prefer the target repo's own agent docs when they exist. Use the bundled references in `references/subagents.md` and `references/output-style.md` as the portable fallback when local role docs are unavailable.
 
 ## Critical Rules Summary
 

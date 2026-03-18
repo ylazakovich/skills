@@ -1,27 +1,41 @@
 # Sub-agent catalog
 
-These role profiles are extracted from the original Claude configuration so the skill stays useful outside Claude-only installs.
+These role profiles are portable defaults. They are not the top priority when the target repo already defines its own roles.
 
-## Research agents
-- `code-researcher`: deep code analysis, trace execution paths, map dependencies, cite files and lines.
-- `diff-researcher`: inspect git history, commits, diffs, change intent, and impact.
-- `web-researcher`: research official documentation and current best practices.
-- `ui-researcher`: inspect live UI structure and interaction flows.
+## Selection priority
+1. Project-local role docs such as `AGENTS.md` or `.agents/**/SKILL.md`
+2. This bundled portable catalog
+3. Legacy Claude-only profiles in `~/.claude/agents/`
 
-## Development agents
-- `junior-backend-engineer`: mechanical, pattern-based edits in up to 3 files.
-- `middle-backend-engineer`: default implementation agent for standard multi-file backend work.
-- `senior-backend-engineer`: complex refactoring, architecture-heavy implementation.
-- `middle-backend-test-engineer`: standard backend test coverage.
-- `senior-backend-test-engineer`: edge cases and complex test scenarios.
+## Project-local roles example: `car-service-platform`
+- `planner`: turns the task into a short executable plan.
+- `architect`: checks architecture fit, boundaries, and dependency impact.
+- `backend-developer`: owns `backend/**`, API contracts, business logic, permissions, and data access for a Django/DRF stack.
+- `frontend-developer`: owns `frontend/**`, routes, components, forms, state, and API integration for a React/Vite/TypeScript stack.
+- `domain-rules-reviewer`: verifies that domain rules, statuses, and calculations still match the source of truth.
+- `plan-reviewer`: checks that delivery matches the approved plan and highlights gaps or residual risk.
 
-## Validation agents
-- `middle-code-validator`: standard validation.
-- `senior-code-validator`: complex validation for interdependent changes.
+## Portable fallback roles
+
+### Research
+- `code-researcher`: deep code analysis, execution paths, dependencies, and file-level evidence.
+- `diff-researcher`: git history, change intent, and migration risk.
+- `web-researcher`: official documentation and current best practices.
+- `ui-researcher`: UI structure, route flow, and interaction behavior.
+
+### Implementation
+- `implementation-generalist`: standard multi-file implementation work within one slice.
+- `backend-specialist`: server-side logic, persistence, auth, APIs, and integrations.
+- `frontend-specialist`: routes, components, forms, client state, and API consumption.
+- `test-engineer`: coverage updates and regression-focused tests.
+
+### Validation
+- `validation-generalist`: standard correctness checks across touched code.
+- `architecture-reviewer`: complex interdependent validation for higher-risk changes.
 
 ## Selection rules
-1. Analyze complexity, not file count.
-2. Start with the simplest capable agent.
-3. Mechanical work -> junior.
-4. Clear multi-file implementation -> middle.
-5. Architectural or high-ambiguity work -> senior.
+1. Prefer repo-local roles over bundled roles.
+2. Analyze complexity and ownership boundaries, not file count alone.
+3. Start with the simplest capable role.
+4. Split backend, frontend, and domain review into separate parallel tracks when ownership does not overlap.
+5. Reserve the strongest reviewer for architecture-heavy or high-ambiguity work.

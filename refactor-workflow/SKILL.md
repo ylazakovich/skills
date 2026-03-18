@@ -7,6 +7,16 @@ description: FOR MAIN ORCHESTRATOR ONLY. Orchestrates refactoring tasks through 
 
 You are the orchestrator. You coordinate sub-agents. You do NOT do deep work yourself.
 
+## Role Resolution Priority
+
+When choosing sub-agent instructions, prefer sources in this order:
+
+1. Project-local guidance in the target repo such as `AGENTS.md`, `.agents/`, or similar local role docs.
+2. Bundled portable references in `references/subagents.md`.
+3. Legacy Claude-only profiles in `~/.claude/agents/` if they exist and are still relevant.
+
+If the target project already defines stack-specific roles, use those roles as the source of truth for delegation.
+
 ## Input Handling
 
 Check if specific files/classes were provided in the arguments:
@@ -59,7 +69,7 @@ You MAY use Read, Glob, Grep sparingly for initial context. This is NOT deep res
 
 You MUST NOT perform deep research yourself. You are the orchestrator, not the researcher.
 
-ONLY delegate via `task` tool to **code-researcher** agents from ~/.claude/agents/.
+ONLY delegate via the environment's native sub-agent mechanism. Prefer project-local role docs when they exist, and otherwise use the bundled portable role catalog.
 
 ### Research Questions to Assign:
 
@@ -101,9 +111,10 @@ Synthesize research findings into refactoring plan:
 - Identify which changes can run in parallel
 
 ### Agent Selection Per Group
-- **Mechanical changes** (remove logs, add annotations, update imports) → junior-backend-engineer
-- **Standard refactoring** with clear specs (extract method, move code, apply patterns) → middle-backend-engineer
-- **Complex restructuring** requiring analysis (split service, redesign architecture) → senior-backend-engineer
+- **Mechanical, localized refactors** → the simplest project-local implementation role that owns the files
+- **Backend/domain/data/API refactors** → backend-oriented role for the target stack
+- **Frontend/UI/state refactors** → frontend-oriented role for the target stack
+- **Complex cross-cutting restructuring** → architect-guided implementation or the most capable generalist role available
 
 ### Risk Assessment
 - Identify API compatibility concerns
@@ -147,15 +158,15 @@ You MUST maximize parallel execution. Only run sequentially when there are true 
 
 **Actor: SUB-AGENTS** | **Mode: PARALLEL**
 
-### Step 1: Compilation Check
+### Step 1: Project Verification
 
-YOU call get_project_problems to check for compilation errors.
+YOU run the most relevant local verification commands for the target project, for example typecheck, tests, build, lint, or framework-specific checks.
 
 ### Step 2: Delegate to Validators
 
-If compilation is clean, delegate to **validation agents**:
-- Standard refactoring changes → middle-code-validator
-- Complex/interdependent changes → senior-code-validator
+If verification is clean, delegate to **validation agents**:
+- Standard refactoring changes → the default validation or review role for the target project
+- Complex/interdependent changes → the most capable validation or architecture-review role available
 
 Validators can run in PARALLEL if they check different parts.
 
@@ -179,13 +190,13 @@ These rules apply to ALL refactoring work:
 - **No comments** - Unless explaining unclear business logic
 - **Maintain API compatibility** - Don't break existing contracts
 - **Small methods** - Extract when method does multiple things
-- **Dependency injection** - No `new` for services, use DI
+- **Use project conventions for wiring dependencies** - do not introduce ad hoc construction or hidden global coupling
 
 ---
 
 ## Portability Note
 
-This skill originated from a Claude Code setup that used external files in `~/.claude/agents/` and a global orchestrator config. For cross-agent use in Claude Code and Codex, use the bundled references in `references/subagents.md` and `references/output-style.md` as the source of truth when the external Claude files are unavailable.
+This skill originated from a Claude Code setup that used external files in `~/.claude/agents/` and a global orchestrator config. For cross-project use in Claude Code and Codex, prefer the target repo's own agent docs when they exist. Use the bundled references in `references/subagents.md` and `references/output-style.md` as the portable fallback when local role docs are unavailable.
 
 ## Critical Rules Summary
 

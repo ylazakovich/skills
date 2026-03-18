@@ -46,3 +46,20 @@ The skill directories live at the repo root so they are easy to install directly
 - `refactor-workflow/SKILL.md`
 
 Each skill also bundles portable references so it remains useful even when the external Claude files are not present.
+
+## Adapting to a target project
+
+Do not force the target project into the original Java/Spring-oriented role names from the source setup.
+
+Recommended approach:
+
+1. Keep these shared skills focused on orchestration.
+2. Define stack-specific roles locally inside the target repo, for example in `AGENTS.md` and `.agents/**/SKILL.md`.
+3. In Codex, prefer the project-local roles first and use the bundled references here only as fallback.
+
+Example: `car-service-platform`
+
+- backend role -> Django / DRF / PostgreSQL ownership
+- frontend role -> React / TypeScript / Vite ownership
+- domain reviewer -> `DOMAIN_RULES.md`
+- plan reviewer -> final gap check against the approved plan
