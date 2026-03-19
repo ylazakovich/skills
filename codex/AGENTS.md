@@ -49,7 +49,7 @@ This repository contains two portable skills adapted from a Claude Code sub-agen
 
 Copy or symlink this file into a target repo as `AGENTS.md` when you want Codex to apply the same sub-agent orchestration style inside that project.
 
-For a project like `car-service-platform`, prefer the repo's own local role docs and stack constraints:
+For a full-stack target repo, prefer the repo's own local role docs and stack constraints:
 - backend: `Python 3.12`, `Django`, `Django REST Framework`
 - frontend: `React`, `TypeScript`, `Vite`
 - domain rules: `DOMAIN_RULES.md`

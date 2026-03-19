@@ -57,7 +57,7 @@ Recommended approach:
 2. Define stack-specific roles locally inside the target repo, for example in `AGENTS.md` and `.agents/**/SKILL.md`.
 3. In Codex, prefer the project-local roles first and use the bundled references here only as fallback.
 
-Example: `car-service-platform`
+Example: a full-stack project with local role docs
 
 - backend role -> Django / DRF / PostgreSQL ownership
 - frontend role -> React / TypeScript / Vite ownership
