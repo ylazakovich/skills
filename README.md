@@ -1,65 +1,113 @@
 # cc-subagents-repo
 
-Portable sub-agent workflow extracted from a Claude Code configuration and repackaged for use with both Claude Code and Codex.
+This repo adds a reusable sub-agent workflow for Claude Code and Codex.
+If you want the short version: install the skills, run one script from this repo, and start working.
 
-## What is in this repo
+## Quick Start
 
-- `orchestrator-workflow/` — main orchestration skill for complex implementation tasks.
-- `refactor-workflow/` — orchestration skill specialized for refactoring work.
-- `claude-config/` — original Claude-specific global config: `CLAUDE.md`, custom agents, commands, output style, status line script.
-- `codex/AGENTS.md` — Codex-compatible project instructions that mirror the same sub-agent operating model.
-- `scripts/` — install helpers.
+Clone this repo first, then run the commands below from the repo root.
+Choose one path below.
 
-## Important limitation
+### Claude
 
-`skills.sh` is a good fit for installing the two reusable skills into both Claude Code and Codex. It does **not** replace the extra Claude-only config from `claude-config/`. Use both layers:
-
-1. Install reusable skills with `skills.sh`.
-2. Install Claude-specific global config with `scripts/install-claude-config.sh`.
-3. Install Codex project guidance with `scripts/install-codex-agents.sh /path/to/repo`.
-
-## Suggested install flow
-
-### Install both skills globally into Claude Code and Codex
+1. Install Claude Code.
+2. Install the skills from this repo:
 
 ```bash
-npx skills add <your-git-url-or-owner/repo> --skill '*' -g -a claude-code -a codex -y
+npx skills add <your-git-url-or-owner/repo> --skill '*' -g -a claude-code -y
 ```
 
-### Install Claude global config
+3. Run the Claude setup script:
 
 ```bash
 ./scripts/install-claude-config.sh
 ```
 
-### Install Codex project instructions into a working repo
+Done: Claude Code gets the reusable skills, and the Claude config is copied into `~/.claude`.
+
+### Codex
+
+1. Install Codex.
+2. Install the skills from this repo:
+
+```bash
+npx skills add <your-git-url-or-owner/repo> --skill '*' -g -a codex -y
+```
+
+3. Copy the Codex project instructions into the repo where you want to work:
 
 ```bash
 ./scripts/install-codex-agents.sh /path/to/your/project
 ```
 
-## Repo layout for skills.sh
+Done: Codex gets the reusable skills, and your target repo gets an `AGENTS.md` file for this workflow.
 
-The skill directories live at the repo root so they are easy to install directly:
+### If You Use Both Claude and Codex
 
-- `orchestrator-workflow/SKILL.md`
-- `refactor-workflow/SKILL.md`
+Install both skill targets at once:
 
-Each skill also bundles portable references so it remains useful even when the external Claude files are not present.
+```bash
+npx skills add <your-git-url-or-owner/repo> --skill '*' -g -a claude-code -a codex -y
+```
 
-## Adapting to a target project
+Then run:
 
-Do not force the target project into the original Java/Spring-oriented role names from the source setup.
+```bash
+./scripts/install-claude-config.sh
+./scripts/install-codex-agents.sh /path/to/your/project
+```
+
+Use this when:
+- you want Claude to get the global config from `claude-config/`
+- you want Codex to get `AGENTS.md` inside a working project
+
+## What Each Script Does
+
+`./scripts/install-claude-config.sh`
+- creates `~/.claude`
+- copies `CLAUDE.md`
+- copies `agents/`, `commands/`, and `output-styles/`
+- installs `statusline-command.sh`
+
+`./scripts/install-codex-agents.sh /path/to/your/project`
+- creates the target directory if needed
+- copies `codex/AGENTS.md` into that repo as `AGENTS.md`
+
+## What Is In This Repo
+
+- `orchestrator-workflow/` - main orchestration skill for complex tasks
+- `refactor-workflow/` - orchestration skill for refactoring tasks
+- `claude-config/` - Claude-specific global config
+- `codex/AGENTS.md` - Codex project instructions
+- `scripts/` - install helpers
+
+## Important Notes
+
+- Installing the skills and installing the Claude config are different steps.
+- For Claude, the skills alone are not the full setup. You also need `./scripts/install-claude-config.sh`.
+- For Codex, `claude-config/` is not required. The Codex flow uses the skills plus `AGENTS.md` in the target repo.
+
+## Adapting This To Your Project
+
+This repo is the shared orchestration layer. Your target project can still define its own local roles and rules.
 
 Recommended approach:
 
 1. Keep these shared skills focused on orchestration.
-2. Define stack-specific roles locally inside the target repo, for example in `AGENTS.md` and `.agents/**/SKILL.md`.
-3. In Codex, prefer the project-local roles first and use the bundled references here only as fallback.
+2. Put stack-specific roles inside the target repo, for example in `AGENTS.md` or `.agents/**/SKILL.md`.
+3. Let Codex prefer project-local instructions first and use the shared references here as fallback.
 
-Example: a full-stack project with local role docs
-
-- backend role -> Django / DRF / PostgreSQL ownership
-- frontend role -> React / TypeScript / Vite ownership
+Example local roles:
+- backend role -> Django / DRF / PostgreSQL
+- frontend role -> React / TypeScript / Vite
 - domain reviewer -> `DOMAIN_RULES.md`
-- plan reviewer -> final gap check against the approved plan
+- plan reviewer -> final check against the approved plan
+
+## Skill Layout
+
+The reusable skills live at the repo root:
+
+- `orchestrator-workflow/SKILL.md`
+- `refactor-workflow/SKILL.md`
+
+Each skill also includes bundled reference files, so it still works even when Claude-specific global files are not present.
